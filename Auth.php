@@ -3,9 +3,26 @@ require_once('db.php');
 
 class auth
 {
-    public function register($get)
+    public function __construct()
     {
 
+    }
+
+    public function register()
+    {
+        switch ($_POST['selected']) {
+            case 'a':
+                $p = 1;
+                break;
+            case 'b':
+                $p = 2;
+                break;
+            case 'c';
+                $p = 3;
+                break;
+        }
+        $q = "INSERT INTO users (email, permission, first, last) VALUES ('{$_POST['email']}', '$p', '{$_POST['first']}', '{$_POST['last']}')";
+        return db::getInstance()->insert_result($q);
     }
 
     public function login($user)
