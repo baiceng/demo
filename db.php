@@ -43,4 +43,13 @@ class db extends mysqli
         }
         return null;
     }
+
+    public function insert_result($query)
+    {
+        try {
+            return $this->query($query);
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
 }
