@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    
+    <title>Login Test</title>
+</head>
+<body>
+    <div id="app">
+        <form @submit.prevent="directMethod">
+            <ul>
+                <li>
+                    <label for="email">Email</label>
+                    <input v-model="email" id="email" name="email" type="text">
+                </li>
+                <li v-if="reg">
+                    <label for="last">Last</label>
+                    <input v-model="last" id="last" name="last" type="text">
+                </li>
+                <li v-if="reg">
+                    <label for="first">First</label>
+                    <input v-model="first" id="first" name="first" type="text">
+                </li>
+                <li v-if="reg">
+                    <select v-model="selected" name="" id="">
+                        <option value="">Choose</option>
+                        <option value="a">Student</option>
+                        <option value="b">Parent</option>
+                        <option value="c">Instructor</option>
+                    </select>
+                </li>
+            </ul>
+            <button>GOGOGO</button>
+        </form>
+
+        <button @click="getSession">GET</button>
+    </div>
+</body>
+</html>
+
+<script>
+    var app = new Vue({
+        el: '#app',
+        data: {
+            reg: false,
+            email: '',
+            first: '',
+            last: '',
+            selected: "",
+        },
+        watch: {
+            selected(el) {
+                console.log("執行watch");
+                if (el === 'c') {
+                    if (!(prompt() === 'sat')) {
+                        this.selected = '';
+                    }
+                }
+            }
+        },
+        methods: {
+            checkEmail() {
+                axios.get('http://localhost:8000/control.php', {
+                        params: {
+                            email: this.email
+                        }
+                    })
+                    .then((res) => {
+                        console.log(res);
+                        if (typeof res !== 'undefined') {
+                            this.reg = res.data.reg;
+                        }
+                    })
+            },
+            register() {
+                axios.post('http://localhost:8000/control.php', {
+                        eamil: this.email,
+                        first: this.first,
+                        last: this.last,
+                        selected: this.selected,
+                    })
+                    .then(res => {
+                        console.log(res);
+                    })
+            },
+            validateIns() {
+                console.log(this.$event);
+                if (prompt("input instructor password") !== 'sat') {
+                    this.ins = false;
+                } 
+            },
+            directMethod() {
+                if (this.reg) {
+                    this.register();
+                }else {
+                    return this.checkEmail();
+                }
+            },
+            getSession() {
+                axios.get("http://localhost:8000/control.php", {
+                        params: {
+                            get_session: true,
+                        }
+                    })
+                    .then(res => {
+                        console.log(res);
+                    })
+            }
+        }
+    })
+</script>
